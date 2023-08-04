@@ -39,9 +39,10 @@ public:
 private:
 	Type re_;
 	Type im_;
+
 };
 
-//определим методы, которые были объявлены внутри класса
+//определим методы, которые были объявлены внутри класса, можно переписать код, в котором объявление и определение всех методов будет внутри класса
 //определим конструктор от двух аргументов
 template < typename Type >
 Complex< Type >::Complex(Type Re, Type Im) : re_(Re), im_(Im) 
@@ -49,7 +50,7 @@ Complex< Type >::Complex(Type Re, Type Im) : re_(Re), im_(Im)
 }
 //определим конструктор от одного аргумента
 template < typename Type >
-Complex< Type >::Complex(Type Re) : re_(Re)
+Complex< Type >::Complex(Type Re) : re_(Re), im_(0)
 {
 }
 
@@ -88,7 +89,7 @@ Type Complex< Type >::Arg() const {
 //определим метод, который возвращает фазу в градусах
 template < typename Type >
 Type Complex< Type >::ArgDeg() const {
-	return this->Arg() * 180 / M_PI;    // с помощью ключевого слова this обращаемся к текущему экземпляру Arg()
+	return this->Arg() * 180.0 / M_PI;    // с помощью ключевого слова this обращаемся к текущему экземпляру Arg()
 }
 //определим метод, который возвращает комплексно-сопряженное число
 template < typename Type >
@@ -97,12 +98,21 @@ Complex< Type > Complex< Type >::Conj() const {
 	return ComplexConj;
 }
 
-#endif // COMPLEX_H
- 
-
-
-
 //для реализации 4го пункта будет необходимо перейти от показательной записи кч к алгебраической
 //в экспоненциальной форме кч выглядит как z=abs*exp(i*arg), для перехода к алгебраической форме необходимо выполнить 
 //следующие преобразования: re=abs*cos(arg), im=abs*sin(arg), z=re+i*im, тк по заданию abs=1, запись можно будет упростить
+// 
+// Фабричный метод, создающий комплексное число из фазы (радианы)
+template <typename Type>
+static Complex<Type> CreateComplexFromPhase(Type phase) {
+	return Complex<Type>(std::cos(phase), std::sin(phase));
+}
 
+// Фабричный метод, создающий комплексное число из фазы (градусы)
+template <typename Type>
+static Complex<Type> CreateComplexFromPhaseDeg(Type phaseDeg) {
+	Type phase = phaseDeg * M_PI / 180.0;
+	return CreateComplexFromPhase(phase);
+}
+
+#endif // COMPLEX_H
